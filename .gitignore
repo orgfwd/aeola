@@ -1,0 +1,7 @@
+# Secrets never enter this repo
+.env
+.env.*
+!.env.example
+.vercel
+node_modules
+.DS_Store

@@ -1,0 +1,11 @@
+# ALLOWLIST: ignore everything, then let through only what the public app
+# needs. A file added later stays private until it's named here on purpose.
+/*
+!/index.html
+!/sw.js
+!/manifest.webmanifest
+!/vercel.json
+!/css
+!/js
+!/icons
+!/api
