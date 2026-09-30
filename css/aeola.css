@@ -879,3 +879,5 @@ body:has(.menu.visible) .menu-open { display: none; }
   padding: 2px 0;
 }
 .help-support:hover { text-decoration: underline; text-underline-offset: 3px; }
+.help-source { font-size: 11px; text-decoration: none; color: rgba(220, 218, 230, 0.75); padding: 2px 0; }
+.help-source:hover { text-decoration: underline; text-underline-offset: 3px; color: rgba(var(--paper), 1); }

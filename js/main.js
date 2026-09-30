@@ -77,6 +77,7 @@ updateDriftButtons();
 })();
 document.getElementById("supportLink").addEventListener("click", function () { track("support-clicked"); });
 document.getElementById("feedbackLink").addEventListener("click", function () { track("feedback-clicked"); });
+document.getElementById("sourceLink").addEventListener("click", function () { track("source-clicked"); });
 
 document.getElementById("versionStamp").textContent = "Aeola " + AEOLA_VERSION + " · " + AEOLA_BUILD_DATE;
 console.info("Aeola " + AEOLA_VERSION + " (" + AEOLA_BUILD_DATE + ")");
