@@ -70,6 +70,11 @@ One menu for every screen (☰, top right), grouped by intent: autopilot, tuning
 
 ## Licence
 
+> “As artists we don’t finish it: we start it. It goes on to have a life without us, a life we didn’t predict.”
+> — Brian Eno & Bette Adriaanse, *What Art Does: An Unfinished Theory*
+
+That's why Aeola is open.
+
 Copyright © 2026 Alex Skepp.
 
 Aeola is free software: you can redistribute it and/or modify it under the terms of the **GNU General Public License, version 3** (see `LICENSE`). In short: use it, learn from it, change it and share it — as long as what you share stays open under the same licence.
