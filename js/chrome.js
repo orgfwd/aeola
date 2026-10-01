@@ -20,7 +20,7 @@ function setMenuOpen(open) {
   menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
   if (!open && typeof disarmClear === "function") disarmClear();
 }
-function openMenu() { setMenuOpen(true); }
+function openMenu() { setMenuOpen(true); coachNotify("menu"); }
 function closeMenu() { setMenuOpen(false); }
 function toggleMenu() {
   if (menuDrawer.classList.contains("visible")) closeMenu(); else openMenu();

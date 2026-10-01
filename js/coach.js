@@ -12,6 +12,13 @@ var COACH_OUTRO_MS = 4500;
 var coachEl = document.getElementById("coach");
 var coachTextEl = document.getElementById("coachText");
 var coachStep = -1;          // -1 = not running
+var coachMenuOpened = false;
+var coachFinished = false;   // finished or skipped during this visit
+// Has this browser been through the intro before? Read once, up front —
+// the dock (room.js) shows its buttons straight away for these people.
+var introSeenAtLoad = (function () {
+  try { return localStorage.getItem("aeolaIntroDone") === "1"; } catch (e) { return false; }
+})();
 var coachPanelOpened = false;
 var coachOutroUntil = 0;
 var coachTargetEl = null;
@@ -45,11 +52,19 @@ var COACH_STEPS = [
     text: function () { return coachVerb() + " a note to shape its sound."; },
     done: function () { return coachPanelOpened; },
     target: function () { return null; }
+  },
+  {
+    // Everything beyond drift and lock all lives in the menu now, on every
+    // screen — so the intro shows the way there instead of just naming it.
+    text: function () { return "Open the menu ☰ — tuning, flight mode and more live there."; },
+    done: function () { return coachMenuOpened; },
+    target: function () { return document.getElementById("menuBtn"); }
   }
 ];
 
 function coachNotify(event) {
   if (event === "panel") coachPanelOpened = true;
+  if (event === "menu") coachMenuOpened = true;
 }
 
 function setCoachText(text) {
@@ -67,8 +82,10 @@ function setCoachTarget(el) {
 }
 
 function startCoach(fromHelp) {
+  track("intro-started", { replay: !!fromHelp });
   coachStep = 0;
   coachPanelOpened = false;
+  coachMenuOpened = false;
   coachOutroUntil = 0;
   // The intro replaces the long hint text — gone at once, not faded out.
   hintEl.style.transition = "none";
@@ -82,6 +99,7 @@ function startCoach(fromHelp) {
 
 function endCoach() {
   coachStep = -1;
+  coachFinished = true;
   coachEl.hidden = true;
   setCoachTarget(null);
   try { localStorage.setItem(COACH_KEY, "1"); } catch (e) {}
@@ -104,7 +122,7 @@ function updateCoach(now) {
     coachStep++;
     track("intro-step", { step: coachStep });
     if (coachStep >= COACH_STEPS.length) {
-      setCoachText("That's the heart of it. The menu holds the rest.");
+      setCoachText("That's the heart of it. Now find what resonates with you.");
       track("intro-completed");
       setCoachTarget(null);
       coachOutroUntil = now + COACH_OUTRO_MS;

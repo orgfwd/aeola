@@ -316,6 +316,7 @@ function spawnNode(px, py, template) {
 
 function commitSpawn(node, dragDistance) {
   trackOnce("first-note");
+  notesPlacedThisSession++;
   var t = clamp(dragDistance / maxDragPx(), 0, 1);
   var gainMult = lerp(0.4, 1.25, t);
   node.sizeScale = lerp(0.6, 1.6, t);
@@ -359,15 +360,21 @@ function toggleAllLocks() {
   updateLockAllBtnLabel();
 }
 
-// Phone dock: an empty room shows no buttons. "lock all" appears with the
-// first note, "drift" once there are two to drift — and they stay once
-// shown, so they don't flicker as unlocked notes fade away. Hidden in
-// flight mode, where aircraft are always locked and never drift.
+// The dock. During someone's very first visit it teaches: an empty room
+// shows no buttons, "lock all" appears with the first note and "drift" once
+// two notes have been placed — then they stay. Anyone who has been through
+// the intro (finished or skipped, now or on an earlier visit) sees both
+// from the start: hiding them again at every launch read as a bug.
+// Hidden in flight mode, where aircraft are always locked and never drift.
 var dockLockRevealed = false, dockDriftRevealed = false;
+var notesPlacedThisSession = 0;
 function updateDock() {
   var own = nodes.filter(function (n) { return !n.pruned && n.kind !== "field" && !n._flightId; }).length;
-  if (own >= 1) dockLockRevealed = true;
-  if (own >= 2) dockDriftRevealed = true;
+  var knowsTheRoom = introSeenAtLoad || coachFinished;
+  if (knowsTheRoom || own >= 1) dockLockRevealed = true;
+  // Notes placed, not notes alive at once: an unlocked note fades in
+  // ~20–30 s, so someone placing notes slowly never had two at a time.
+  if (knowsTheRoom || own >= 2 || notesPlacedThisSession >= 2) dockDriftRevealed = true;
   var flying = flightIsOn();
   var lock = document.getElementById("dockLockBtn"), drift = document.getElementById("dockDriftBtn");
   var hideLock = !dockLockRevealed || flying, hideDrift = !(dockDriftRevealed || driftActive) || flying;

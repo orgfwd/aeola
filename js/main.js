@@ -79,6 +79,14 @@ document.getElementById("supportLink").addEventListener("click", function () { t
 document.getElementById("feedbackLink").addEventListener("click", function () { track("feedback-clicked"); });
 document.getElementById("sourceLink").addEventListener("click", function () { track("source-clicked"); });
 
+// "I'd want that" — counted once per visit, then simply says thanks.
+var appInterestBtn = document.getElementById("appInterestBtn");
+appInterestBtn.addEventListener("click", function () {
+  track("app-interest");
+  appInterestBtn.disabled = true;
+  appInterestBtn.textContent = "thanks — noted";
+});
+
 document.getElementById("versionStamp").textContent = "Aeola " + AEOLA_VERSION + " · " + AEOLA_BUILD_DATE;
 console.info("Aeola " + AEOLA_VERSION + " (" + AEOLA_BUILD_DATE + ")");
 
