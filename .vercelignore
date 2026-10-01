@@ -2,6 +2,7 @@
 # needs. A file added later stays private until it's named here on purpose.
 /*
 !/index.html
+!/theory.html
 !/sw.js
 !/manifest.webmanifest
 !/vercel.json

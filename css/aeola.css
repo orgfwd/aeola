@@ -901,3 +901,5 @@ body:has(.menu.visible) .menu-open { display: none; }
 @media (min-width: 701px) {
   .help-modal { width: 500px; }
 }
+.help-paper { margin: 10px 0 0; font-size: 11.5px; color: rgba(220, 218, 230, 0.8); }
+.help-paper a { color: rgba(var(--accent), 0.95); text-underline-offset: 3px; }

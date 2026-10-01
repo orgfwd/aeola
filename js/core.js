@@ -70,7 +70,11 @@ var DIATONIC_NOTES = [
   { name: "E", midi: 64 },
   { name: "F", midi: 65 },
   { name: "G", midi: 67 },
-  { name: "A", midi: 69 }
+  { name: "A", midi: 69 },
+  // B completes the white keys (added 1 October 2026). It brings the two most
+  // restless white-key relationships with it: the B-C semitone and the
+  // B-F tritone. Tension is half the point.
+  { name: "B", midi: 71 }
 ];
 
 var CHROMATIC_NOTES = [

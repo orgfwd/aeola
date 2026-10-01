@@ -16,6 +16,7 @@ var CACHE = "aeola-" + AEOLA_VERSION;
 var APP_FILES = [
   "./",
   "index.html",
+  "theory.html",
   "manifest.webmanifest",
   "css/aeola.css",
   "js/version.js",
@@ -72,9 +73,12 @@ self.addEventListener("fetch", function (event) {
 
   event.respondWith(
     caches.open(CACHE).then(function (cache) {
-      // A shared link is index.html plus a #room=… hash (never sent) or a
-      // query string — both should open the cached app.
-      var lookup = req.mode === "navigate" ? cache.match("index.html") : cache.match(req, { ignoreSearch: true });
+      // A page request gets that page if it's cached (theory.html); anything
+      // else — "/", a shared link with a #room=… hash (never sent) or a query
+      // string — opens the cached app.
+      var lookup = cache.match(req, { ignoreSearch: true }).then(function (hit) {
+        return hit || (req.mode === "navigate" ? cache.match("index.html") : null);
+      });
       return lookup.then(function (hit) {
         return hit || fetch(req);
       });

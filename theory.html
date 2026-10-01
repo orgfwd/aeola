@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>On Beating, Roughness and the Impossibility of Agreement</title>
+<!-- One concession to the present: without this, phones show the page at
+     a quarter of its size. Everything else is as it would have been. -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="#FFFFFF" text="#000000" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+<font face="Times New Roman, Times, serif">
+
+<p><a href="./">Return to Aeola</a></p>
+
+<hr>
+
+<center>
+<h1>On Beating, Roughness and the Impossibility of Agreement:<br>
+The Physical Basis of Aeola</h1>
+
+<p><b>A. Skepp</b><br>
+<i>Department of Big Ears, Aeola Project</i></p>
+
+<p><font size="2">Received 1 October 2026. Accepted: not applicable.</font></p>
+</center>
+
+<hr>
+
+<h2>Abstract</h2>
+
+<p>Aeola is a browser-based instrument in which a listener places notes on a plane and observes what happens between them. This paper describes the physical model behind the instrument: how each note's harmonic spectrum is estimated, how beating between near-coincident harmonics is detected and displayed, how roughness is quantified, and how two tuning systems (equal temperament and per-chord just intonation) are made to disagree in an audible and visible way. We further describe a mode in which live air traffic is used as a source of notes, and show that its eight loops return to their initial alignment after approximately 2.7 million years. No claim is made that consonance is preferable to dissonance.</p>
+
+<p><b>Keywords:</b> beating, roughness, just intonation, equal temperament, the syntonic comma, synchroscopes, ADS-B, airports.</p>
+
+<hr>
+
+<h2>1. Introduction</h2>
+
+<p>Sound is a variation in air pressure. A sustained musical note is, to a good approximation, a periodic variation, and any periodic variation can be described as a sum of sinusoids whose frequencies are whole-number multiples of a fundamental frequency <i>f</i>: the <i>harmonics</i> <i>f</i>, 2<i>f</i>, 3<i>f</i>, and so on (Helmholtz, 1863).</p>
+
+<p>When two notes sound together, their harmonics sound together. Where a harmonic of one note lies very close to a harmonic of the other, the two interfere. The listener hears this interference as a slow throb (beating) or, at somewhat larger separations, as a grainy unsteadiness (roughness). Where the harmonics coincide exactly, neither occurs, and the two notes appear to fuse. The phenomena commonly called <i>consonance</i> and <i>dissonance</i> are, to a first approximation, descriptions of how many of these near-coincidences exist and how strong they are (Plomp &amp; Levelt, 1965).</p>
+
+<p>Aeola makes these interactions visible. Its purpose is not to resolve them.</p>
+
+<h2>2. The notes</h2>
+
+<p>Each note placed in Aeola is a small chord: a root and two or three further tones above it (a triad, an added ninth, a suspended fourth, or an open fifth). The horizontal position of a note selects its root from the seven white keys (C to B) or, optionally, all twelve pitch classes; the vertical position selects one of three octave registers. In equal temperament, the frequency of the tone with MIDI number <i>m</i> is</p>
+
+<pre>
+    f(m) = 440 &middot; 2^((m - 69) / 12)  Hz                               (1)
+</pre>
+
+<p>Each tone is produced by two oscillators detuned by &plusmn;6 cents (hundredths of a semitone) from one another, a common technique for warmth which, it should be noted, introduces a small beating of its own (approximately 1.8 Hz at middle C). A slow vibrato of up to 35 cents at 4.2&ndash;5.8 Hz is added. A note that is <i>locked</i> repeats indefinitely and, over periods of 52, 71 and 97 seconds, slowly varies its vibrato depth, filter brightness and pitch (by up to 6 cents). We refer to this as <i>breathing</i>.</p>
+
+<h2>3. Estimating the harmonic spectrum</h2>
+
+<p>The synchroscope does not listen to the audio. It reconstructs each tone's spectrum from the parameters that produced it. For an oscillator of fundamental <i>f</i><sub>0</sub>, harmonic <i>k</i> (for <i>k</i> = 1&hellip;8, and only below 5 kHz) is assigned an amplitude according to the oscillator's waveform:</p>
+
+<pre>
+    sine:       a_k = 1 if k = 1, otherwise 0
+    sawtooth:   a_k = 1 / k
+    triangle:   a_k = 1 / k&sup2;  for odd k, otherwise 0                   (2)
+</pre>
+
+<p>Timbres with a sub-oscillator receive an additional component at <i>f</i><sub>0</sub>/2 with amplitude 0.5. Each amplitude is then multiplied by the magnitude response of the timbre's filter, using the standard second-order prototypes with <i>x</i> = <i>f</i>/<i>f</i><sub>c</sub> and quality factor <i>Q</i>:</p>
+
+<pre>
+                           1                                 x / Q
+    |H_lowpass|  =  ------------------      |H_bandpass| = ------------------
+                    &radic;((1 - x&sup2;)&sup2; + (x/Q)&sup2;)                 &radic;((1 - x&sup2;)&sup2; + (x/Q)&sup2;)
+
+                           x&sup2;
+    |H_highpass| =  ------------------                                     (3)
+                    &radic;((1 - x&sup2;)&sup2; + (x/Q)&sup2;)
+</pre>
+
+<p>Amplitudes are normalised so that the strongest harmonic of each tone is 1, and harmonics below 4% of that are discarded. The model ignores phase, masking and the detuned second oscillator. It is an estimate, and it is presented as one.</p>
+
+<h2>4. Beating</h2>
+
+<p>Two sinusoids of equal amplitude and nearby frequencies <i>f</i><sub>1</sub> and <i>f</i><sub>2</sub> sum to</p>
+
+<pre>
+    sin(2&pi;f&#8321;t) + sin(2&pi;f&#8322;t) = 2 cos(&pi;(f&#8321; - f&#8322;)t) &middot; sin(&pi;(f&#8321; + f&#8322;)t)       (4)
+</pre>
+
+<p>That is, a tone at the mean frequency whose loudness rises and falls |<i>f</i><sub>1</sub> &minus; <i>f</i><sub>2</sub>| times per second. This is beating. Aeola compares every harmonic of one note with every harmonic of another. A pair separated by between 0.25 Hz and 14 Hz is classed as beating, weighted by the smaller of its two amplitudes (since the depth of a beat is limited by its weaker component). Pairs closer than 0.25 Hz are classed as <i>in sync</i>. The strongest beating pair determines the rate shown.</p>
+
+<p>The result is drawn as a <i>synchroscope</i>: the cockpit instrument with which the pilot of a twin-engine aircraft synchronises the propellers, which rotates while the engines are out of step and stands still when they agree. In Aeola the disc between two notes rotates once per beat, in the direction of whichever note is sharp. A dashed ring around a single note indicates beating among that chord's own tones.</p>
+
+<p><i>Worked example.</i> In equal temperament, the third harmonic of C4 (784.88 Hz) and the second harmonic of G4 (783.99 Hz) differ by 0.89 Hz. A C major chord therefore beats at slightly less than once per second, which the reader may verify by listening, or by watching the ring.</p>
+
+<h2>5. Roughness</h2>
+
+<p>When two harmonics are too far apart to be heard as a single beating tone but too close to be heard as two separate tones, the result is roughness. Following Plomp and Levelt (1965), in the parameterisation of Sethares (1993), the roughness of two partials separated by &Delta;<i>f</i>, the lower at <i>f</i><sub>low</sub>, is</p>
+
+<pre>
+    d(x) = (e^(-3.5x) - e^(-5.75x)) / 0.1807,    x = 0.24 &Delta;f / (0.021 f_low + 19)     (5)
+</pre>
+
+<p>normalised so that the worst case, at <i>x</i> &asymp; 0.22, equals 1. For two notes A and B, the products <i>a</i><sub>i</sub><i>b</i><sub>j</sub><i>d</i>(<i>x</i><sub>ij</sub>) are summed over all harmonic pairs separated by more than 14 Hz and divided by &radic;(<i>E</i><sub>A</sub><i>E</i><sub>B</sub>), where <i>E</i> is the sum of squared amplitudes, so that richer timbres are not judged rougher merely for having more harmonics. Values below 0.35 are treated as the ordinary grain of two notes in this register and are not displayed. Between 0.35 and 0.85 the line between the notes visibly shakes, a condition referred to in the instrument as <i>turbulence</i>. Above 0.6 the pair is reported as turbulent in text.</p>
+
+<h2>6. Two tunings, and why they cannot agree</h2>
+
+<p>Equal temperament (Eq. 1) divides the octave into twelve identical steps. Its intervals are close to the whole-number frequency ratios at which harmonics coincide, but, except for the octave, never equal to them. Aeola calls this <i>magnetic north</i>: the practical compass, slightly off from the real thing everywhere. The difference, which we call the <i>declination</i>, is given below in cents.</p>
+
+<center>
+<table border="1" cellpadding="4" cellspacing="0">
+<tr><th>Interval</th><th>Pure ratio</th><th>Pure (cents)</th><th>Equal (cents)</th><th>Declination</th></tr>
+<tr><td>minor third</td><td align="center">6 : 5</td><td align="right">315.64</td><td align="right">300</td><td align="right">&minus;15.64</td></tr>
+<tr><td>major third</td><td align="center">5 : 4</td><td align="right">386.31</td><td align="right">400</td><td align="right">+13.69</td></tr>
+<tr><td>perfect fourth</td><td align="center">4 : 3</td><td align="right">498.04</td><td align="right">500</td><td align="right">+1.96</td></tr>
+<tr><td>perfect fifth</td><td align="center">3 : 2</td><td align="right">701.96</td><td align="right">700</td><td align="right">&minus;1.96</td></tr>
+<tr><td>major sixth</td><td align="center">5 : 3</td><td align="right">884.36</td><td align="right">900</td><td align="right">+15.64</td></tr>
+<tr><td>minor seventh</td><td align="center">9 : 5</td><td align="right">1017.60</td><td align="right">1000</td><td align="right">&minus;17.60</td></tr>
+</table>
+<p><font size="2"><b>Table 1.</b> Declination of equal-tempered intervals from their pure ratios.</font></p>
+</center>
+
+<p><i>True north</i> tunes the tones of each chord to pure ratios above that chord's root (5:4, 3:2, 6:5, 4:3, 2:1, 9:4), so that the chord's own harmonics coincide and its internal beating stops. During the change, all sounding voices glide to their new frequencies over 2.4 seconds, so that the beating can be heard to slow and cease. Because vibrato and oscillator detuning would otherwise obscure the result, both are reduced to 30% under true north.</p>
+
+<p>The roots, however, remain on the equal-tempered grid. The consequence is unavoidable. Under true north, the major third of a C major chord sits at 1.25 &times; 261.63 = 327.03 Hz, while an E minor chord built on the grid's E sits at 329.63 Hz. The two now differ by 2.60 Hz and beat accordingly, where under equal temperament they coincided exactly. Purity inside each chord is paid for between chords. This is a local instance of the <i>syntonic comma</i>, and no system of fixed tuning removes it: no tuning settles everything at once. The instrument considers this a feature.</p>
+
+<h2>7. Flight mode</h2>
+
+<p>In flight mode, notes are taken from live ADS-B position reports of aircraft within 40 km of Stockholm Arlanda or Cologne Bonn, as aggregated and published by adsb.lol under the Open Database License. The plane of the instrument is read as a vertical profile: horizontal position is longitude, and vertical position is altitude, scaled by its square root against a ceiling of 20,000 ft so that the low-altitude traffic near the airport occupies most of the display. An aircraft climbing out therefore rises both on the screen and through the registers. Between position reports, which are fetched every two minutes, each aircraft is advanced by dead reckoning from its last known track, ground speed and vertical rate.</p>
+
+<p>Aircraft join one at a time, nearest to the airport first, at intervals of 2.2&ndash;4.0 seconds, and enter at a quarter of full loudness, reaching full loudness over three repetitions. Each repeats on a fixed loop of its own length: 5.3, 5.9, 6.7, 7.3, 7.9, 8.3, 8.9 or 9.7 seconds before scaling. These lengths, expressed in tenths of a second, are distinct primes, so the loops share no common period and drift continuously in and out of phase. This technique, tape loops of unequal length, is borrowed from Eno (1978), whose <i>Music for Airports</i> was written for Cologne Bonn.</p>
+
+<p>The least common multiple of the eight loop lengths is 865,749,937,047,217 tenths of a second, or approximately 2.74 million years, after which the eight loops return to their initial alignment. The author does not intend to wait.</p>
+
+<h2>8. Limitations</h2>
+
+<p>The synchroscope is a visualisation, not a measurement. It reconstructs spectra rather than analysing sound, ignores phase and masking, and treats each pair of notes in isolation. Its thresholds were chosen by calculation and adjusted by ear. It is likely to be wrong occasionally, in the way an honest instrument is wrong.</p>
+
+<p>No claim is made that dissonance is undesirable. The author considers it roughly half the point.</p>
+
+<h2>9. Conclusion</h2>
+
+<p>We have described an instrument that shows what happens between notes: where they settle, where they clash, and why no arrangement of tuning makes them all agree. Whether any of this resonates with the reader is beyond the scope of the present paper.</p>
+
+<blockquote>
+<p><i>&ldquo;The art engagement begins where the functional engagement ends.&rdquo;</i><br>
+&mdash; Eno &amp; Adriaanse (2025)</p>
+</blockquote>
+
+<h2>Acknowledgements</h2>
+
+<p>The author thanks the volunteers whose receivers feed adsb.lol, the LAME project, and the fellow passengers on a cramped flight, who were not consulted.</p>
+
+<h2>Funding and contributions</h2>
+
+<p>This work received no funding. Hyperfocus was provided by the author&rsquo;s ADHD, without which the project would have been finished sooner, or never started. The code and the technical sections of this paper were written by Claude Opus 5.5 (Anthropic). The ears, the taste and the decisions are the author&rsquo;s.</p>
+
+<h2>References</h2>
+
+<ol>
+<li>Eno, B. (1978). <i>Ambient 1: Music for Airports</i>. Polydor / EG Records.</li>
+<li>Eno, B., &amp; Adriaanse, B. (2025). <i>What Art Does: An Unfinished Theory</i>. London: Faber &amp; Faber.</li>
+<li>Helmholtz, H. von (1863). <i>Die Lehre von den Tonempfindungen als physiologische Grundlage f&uuml;r die Theorie der Musik</i>. Braunschweig: Vieweg. English translation by A. J. Ellis, <i>On the Sensations of Tone</i> (1875).</li>
+<li>Plomp, R., &amp; Levelt, W. J. M. (1965). Tonal consonance and critical bandwidth. <i>Journal of the Acoustical Society of America</i>, 38(4), 548&ndash;560.</li>
+<li>Sethares, W. A. (1993). Local consonance and the relationship between timbre and scale. <i>Journal of the Acoustical Society of America</i>, 94(3), 1218&ndash;1228.</li>
+<li>Sethares, W. A. (2005). <i>Tuning, Timbre, Spectrum, Scale</i> (2nd ed.). London: Springer.</li>
+</ol>
+
+<hr>
+
+<p><a href="./">Return to Aeola</a></p>
+
+<address>
+Last modified: 1 October 2026.<br>
+Source code: <a href="https://github.com/orgfwd/aeola">github.com/orgfwd/aeola</a> (GPL-3.0).<br>
+Comments may be sent to the author via the Feedback link in Aeola.
+</address>
+
+</font>
+</body>
+</html>

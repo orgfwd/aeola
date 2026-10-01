@@ -78,6 +78,7 @@ updateDriftButtons();
 document.getElementById("supportLink").addEventListener("click", function () { track("support-clicked"); });
 document.getElementById("feedbackLink").addEventListener("click", function () { track("feedback-clicked"); });
 document.getElementById("sourceLink").addEventListener("click", function () { track("source-clicked"); });
+document.getElementById("paperLink").addEventListener("click", function () { track("paper-opened"); });
 
 // "I'd want that" — counted once per visit, then simply says thanks.
 var appInterestBtn = document.getElementById("appInterestBtn");
