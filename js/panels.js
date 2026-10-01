@@ -22,7 +22,7 @@ function markInteracted() {
   if (!hasInteracted) {
     hasInteracted = true;
     hintEl.classList.add("hidden");
-    document.querySelector(".wordmark").classList.add("hidden"); // steps aside with the intro text
+    titleStepAside(); // the opening title leaves with the intro text
   }
 }
 

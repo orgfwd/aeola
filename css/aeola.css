@@ -20,7 +20,8 @@
   --panel-bg: rgba(8, 12, 13, 0.74);
 }
 @media (prefers-reduced-motion: reduce) {
-  .wordmark { animation: none; opacity: 1; }
+  .tagline, .hint p { animation: none; opacity: 1; }
+  .wm-l.wm-locked { animation: none; }
   .node-panel, .snapshot-panel, .reveal-toggle .switch, .toast, .help-backdrop, .help-modal { transition-duration: 0.01ms !important; }
   .rel-detail { animation: none; }
   .snap-chip.chip-new { animation: none; box-shadow: 0 0 0 2px rgba(var(--accent2), 0.4); }
@@ -63,48 +64,119 @@ canvas {
 .top {
   text-align: center;
 }
-.wordmark {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
-  font-weight: 600;
-  font-size: 15px;
-  letter-spacing: -0.01em;
-  color: rgba(var(--paper), 0.92);
-  text-shadow: 0 0 26px rgba(var(--accent), 0.4);
-  opacity: 0;
-  animation: wordmarkIn 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+/* ── The opening title: a film's first frame rather than a logo. It only
+   exists before the first touch, so it can afford to be large. title.js
+   drives three custom properties per letter while it tunes in:
+   --wm-a (the letter's own brightness, which beats), --wm-dx (how far its
+   green twin sways) and --wm-g (how visible the twin still is). */
+.title {
+  margin-top: clamp(4px, 6vh, 64px);
+  transition: opacity 1.4s ease;
 }
-.wordmark::before {
-  content: "";
+.title.hidden { opacity: 0; }
+.wordmark {
+  display: flex;
+  justify-content: center;
+  gap: 0.36em;
+  margin: 0;
+  /* the gap sits between letters only, so no trailing-tracking offset */
+  font-family: -apple-system, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+  font-weight: 200;
+  font-size: clamp(38px, min(8.5vw, 11vh), 88px);
+  line-height: 1;
+  color: rgb(var(--paper));
+}
+.wm-l {
+  position: relative;
+  display: inline-block;
+  opacity: var(--wm-a, 0);
+  text-shadow: 0 0 calc(0.35em) rgba(var(--accent), 0.28);
+}
+/* The twin: the same letter in the room's green, a little out of tune. */
+.wm-l::after {
+  content: attr(data-l);
+  position: absolute;
+  inset: 0;
+  color: rgb(var(--accent));
+  opacity: var(--wm-g, 0);
+  transform: translateX(var(--wm-dx, 0));
+  text-shadow: 0 0 0.3em rgba(var(--accent), 0.6);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+/* The moment a pair agrees: one soft bloom, then the steady glow. */
+.wm-l.wm-locked { animation: wmLock 1.3s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes wmLock {
+  0% { text-shadow: 0 0 0.12em rgba(var(--accent), 0.95), 0 0 0.6em rgba(var(--accent), 0.55); }
+  100% { text-shadow: 0 0 0.35em rgba(var(--accent), 0.28); }
+}
+.wm-string {
+  position: relative;
+  width: min(78vw, 5.6em);
+  font-size: clamp(38px, min(8.5vw, 11vh), 88px); /* so em matches the wordmark */
+  height: 24px;
+  margin: 0.14em auto 0;
+}
+.wm-string svg { display: block; width: 100%; height: 100%; overflow: visible; }
+/* The amber lamp at the string's end: lights once the word is in tune. */
+.wm-lamp {
+  position: absolute;
+  right: -2px;
+  top: 50%;
   width: 6px;
   height: 6px;
+  margin-top: -3px;
   border-radius: 50%;
   background: rgb(var(--accent2));
   box-shadow: 0 0 10px 1px rgba(var(--accent2), 0.7);
-  animation: dotPulse 4.5s ease-in-out infinite;
+  opacity: 0;
+  transition: opacity 1.2s ease;
 }
-@keyframes wordmarkIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+.title.in-tune .wm-lamp { opacity: 1; animation: dotPulse 4.5s ease-in-out 1.2s infinite; }
 @keyframes dotPulse {
   0%, 100% { opacity: 0.65; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.25); }
 }
-.hint {
-  margin-top: 8px;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 12px;
-  letter-spacing: 0.01em;
-  color: rgba(220, 218, 230, 0.77);
-  transition: opacity 1.4s ease;
-  max-width: 640px;
-  margin-left: auto;
-  margin-right: auto;
+.tagline {
+  margin: 14px auto 0;
+  max-width: 34em;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: rgba(var(--paper), 0.62);
+  opacity: 0;
+  text-wrap: balance;
+  animation: titleRise 1.6s cubic-bezier(0.16, 1, 0.3, 1) 2.6s forwards;
 }
+@keyframes titleRise {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* The intro text: one gesture per line, room to breathe between them. */
+.hint {
+  margin: clamp(22px, 5vh, 44px) auto 0;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12.5px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  color: rgba(220, 218, 230, 0.74);
+  transition: opacity 1.4s ease;
+  max-width: 34em;
+}
+.hint p {
+  margin: 0 0 0.85em;
+  text-wrap: balance;
+  opacity: 0;
+  animation: titleRise 1.2s ease forwards;
+}
+.hint p:nth-child(1) { animation-delay: 3.0s; }
+.hint p:nth-child(2) { animation-delay: 3.25s; }
+.hint p:nth-child(3) { animation-delay: 3.5s; }
+.hint p:nth-child(4) { animation-delay: 3.75s; }
+.hint p:nth-child(5) { animation-delay: 4.0s; }
 .hint.hidden { opacity: 0; }
+html:not(.touch) .touch-only { display: none; }
 .reveal-toggle {
   display: flex;
   align-items: center;
@@ -571,11 +643,6 @@ canvas {
 /* No space bar on a touch screen: hide help that talks about it. */
 .touch .desktop-only { display: none; }
 
-/* The wordmark steps aside with the intro text at the first touch. Its
-   entrance animation holds opacity at 1 (fill: forwards), so fading it
-   needs an animation of its own rather than a plain opacity change. */
-.wordmark.hidden { animation: wordmarkOut 1.4s ease forwards; }
-@keyframes wordmarkOut { from { opacity: 1; } to { opacity: 0; } }
 
 /* Play/pause glyph on drift — green, because it starts something. SVG, not
    a ▶ character, which iOS would render as a coloured emoji. */
@@ -627,7 +694,8 @@ canvas {
 
 @media (max-width: 700px) {
 
-  .hint { font-size: 12.5px; line-height: 1.5; }
+  .hint { font-size: 12.5px; padding: 0 8px; }
+  .tagline { font-size: 12.5px; padding: 0 12px; }
 
 
   .coach { bottom: calc(86px + env(safe-area-inset-bottom, 0px)); font-size: 13.5px; }

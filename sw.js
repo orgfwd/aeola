@@ -21,6 +21,7 @@ var APP_FILES = [
   "css/aeola.css",
   "js/version.js",
   "js/core.js",
+  "js/title.js",
   "js/metrics.js",
   "js/audio.js",
   "js/harmony.js",

@@ -4,14 +4,10 @@ var canvas = document.getElementById("stage");
 var c2d = canvas.getContext("2d");
 var hintEl = document.getElementById("hint");
 
-// A phone or tablet: no hover, no space bar. Drives the intro wording and
-// hides help that only makes sense with a keyboard (.touch .desktop-only).
+// A phone or tablet: no hover, no space bar. Swaps the intro wording and
+// help to touch (.touch-only / .desktop-only in the markup).
 var IS_TOUCH = !!(window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse)").matches);
-if (IS_TOUCH) {
-  document.documentElement.classList.add("touch");
-  hintEl.textContent = "Tap for a soft note. Press and drag out before releasing to make it bigger and louder. " +
-    "Tap a placed note to lock it or shape its sound; drag it to move it. The menu holds the rest.";
-}
+if (IS_TOUCH) document.documentElement.classList.add("touch");
 var revealToggle = document.getElementById("revealToggle");
 var gridToggle = document.getElementById("gridToggle");
 var clearBtn = document.getElementById("clearBtn");

@@ -99,8 +99,28 @@
   </div>
   <div class="overlay">
     <div class="top">
-      <div class="wordmark">Aeola</div>
-      <div class="hint" id="hint">Click for a soft note. Press and drag out before releasing to make it bigger and louder. Click a placed note to lock it or shape its timbre, chord color and effects; drag it to move it. Press space to dial in a note's sound before placing it. The menu (top right) holds tuning, snapshot, weather and more.</div>
+      <!-- The opening title. Each letter arrives with a green twin a little
+           out of step and beating against it; the beat slows and the pair
+           lock, one letter after another, the way a string is tuned by ear.
+           The line beneath is the string (title.js). Everything here steps
+           aside at the first touch. -->
+      <div class="title" id="title">
+        <h1 class="wordmark" aria-label="Aeola">
+          <span class="wm-l" data-l="A" aria-hidden="true">A</span><span class="wm-l" data-l="E" aria-hidden="true">E</span><span class="wm-l" data-l="O" aria-hidden="true">O</span><span class="wm-l" data-l="L" aria-hidden="true">L</span><span class="wm-l" data-l="A" aria-hidden="true">A</span>
+        </h1>
+        <div class="wm-string" aria-hidden="true">
+          <svg viewBox="0 0 400 24" preserveAspectRatio="none"><defs><linearGradient id="wmStringFade" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="rgb(226,236,230)" stop-opacity="0"/><stop offset="0.18" stop-color="rgb(226,236,230)" stop-opacity="0.5"/><stop offset="0.82" stop-color="rgb(226,236,230)" stop-opacity="0.5"/><stop offset="1" stop-color="rgb(226,236,230)" stop-opacity="0"/></linearGradient></defs><path id="wmStringPath" d="M0 12 L400 12" fill="none" stroke="url(#wmStringFade)" stroke-width="1" vector-effect="non-scaling-stroke"/></svg>
+          <span class="wm-lamp"></span>
+        </div>
+        <p class="tagline">An instrument for finding what resonates with you.</p>
+      </div>
+      <div class="hint" id="hint">
+        <p><span class="touch-only">Tap</span><span class="desktop-only">Click</span> anywhere for a soft note.</p>
+        <p>Press and pull outward for a bigger, louder one.</p>
+        <p><span class="touch-only">Tap</span><span class="desktop-only">Click</span> a note to lock it or shape its sound. Drag to move it.</p>
+        <p class="desktop-only">Press space to shape a sound before you place it.</p>
+        <p>Everything else is in the menu<span class="desktop-only">, top right</span>.</p>
+      </div>
     </div>
   </div>
 
@@ -252,6 +272,7 @@
 
 <script src="js/version.js"></script>
 <script src="js/core.js"></script>
+<script src="js/title.js"></script>
 <script src="js/metrics.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/harmony.js"></script>
