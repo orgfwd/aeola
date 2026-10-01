@@ -50,7 +50,7 @@ var clearArmTimer = null;
 function disarmClear() {
   if (clearArmTimer) { clearTimeout(clearArmTimer); clearArmTimer = null; }
   clearBtn.classList.remove("armed");
-  clearBtn.textContent = "clear the room";
+  clearBtn.textContent = "clear the airspace";
 }
 clearBtn.addEventListener("click", function () {
   if (!clearArmTimer) {

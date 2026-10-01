@@ -549,7 +549,7 @@ var SHARE_COLORS = ["triad", "add9", "sus4", "open5th"];
 var SHARE_TIMBRES = ["pure", "warm", "resonant", "nasal", "cold", "rich"];
 
 function encodeSharedCombo(combo) {
-  var name = (combo.name || "shared room").slice(0, 60);
+  var name = (combo.name || "shared airspace").slice(0, 60);
   var nameBytes = new TextEncoder().encode(name);
   var nodeBytes = [];
   combo.nodes.forEach(function (n) {
@@ -630,7 +630,7 @@ function showSharedRoomToast(name) {
 }
 
 function loadCombo(combo) {
-  if (nodes.length && !window.confirm("Replace the current soundscape with \"" + combo.name + "\"?")) return;
+  if (nodes.length && !window.confirm("Replace the current airspace with \"" + combo.name + "\"?")) return;
   clearAllNodes();
   closeSnapshotPanel();
   initAudio();
